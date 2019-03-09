@@ -9,7 +9,7 @@ use std::sync::mpsc::channel;
 
 #[inline]
 fn is_valid(data: u8) -> bool {
-    (data & 0x0F) == 0x0F
+    !((data & 0x0F) == 0x0F)
 }
 
 
@@ -51,10 +51,10 @@ fn main() {
                     let mut buffer = vec![0u8; 164];
                     lepton.read(&mut buffer).unwrap();
 
-                    tx.send(buffer).unwrap();
-                    // if is_valid(buffer[0]) {
-                    //     tx.send(buffer).unwrap();
-                    // }
+                    // tx.send(buffer).unwrap();
+                    if is_valid(buffer[0]) {
+                        tx.send(buffer).unwrap();
+                    }
                 }
             }
             thread::sleep(Duration::new(0, loop_delay_ns)); // secs, nanos
