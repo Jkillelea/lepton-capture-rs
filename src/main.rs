@@ -68,11 +68,13 @@ fn main() {
     // \/
 
     // Processing/sorting loop
-    // let mut stdout = io::stdout();
-    // let mut stdout = stdout.lock();
+    let mut image = vec![ vec![0u16; 160]; 120]; // 160 by 120
     loop {
-        if let Ok(packet) = rx.recv() {
-            println!("{:x?} {:x?}", packet[0], packet[1]);
+        let packet;
+        if let Ok(rx_pak) = rx.recv() {
+            packet = rx_pak;
+        }  else {
+            continue;
         }
     }
     // ||
