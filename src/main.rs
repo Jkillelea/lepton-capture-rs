@@ -40,7 +40,7 @@ fn main() {
     // Receiver thread loop
     thread::spawn(move || {
         // Open SPI
-        let spi_speed     = 21_000_000;
+        let spi_speed     = 20_000_000; // really winds up being like 18MHz
         let loop_delay_ns = calculate_loop_delay_ns(spi_speed);
         let mut lepton    = LeptonSpi::new(0, spi_speed).unwrap();
 
@@ -70,15 +70,13 @@ fn main() {
     // Processing/sorting loop
     let mut image = vec![ vec![0u16; 160]; 120]; // 160 by 120
     loop {
-        let packet;
+        let packet: LeptonPacket;
         if let Ok(rx_pak) = rx.recv() {
-            packet = rx_pak;
+            packet = rx_pak.into();
         }  else {
             continue;
         }
-
-        println!("{:x?} {:x?}", packet[0], packet[1]);
-        
+        println!("{} {} {}", packet.valid, packet.segment_no, packet.packet_no);
     }
     // ||
     // ||
