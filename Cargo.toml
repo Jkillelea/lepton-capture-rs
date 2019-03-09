@@ -1,0 +1,8 @@
+[package]
+name = "lepton-capture-rs"
+version = "0.1.0"
+authors = ["Jacob Killelea <Jkillelea@protonmail.ch>"]
+edition = "2018"
+
+[dependencies]
+lepton-sdk-rs-sys = { path = "lepton-sdk-rs-sys" }
