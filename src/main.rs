@@ -12,14 +12,11 @@ fn is_valid(data: u8) -> bool {
     !((data & 0x0F) == 0x0F)
 }
 
-
 fn calculate_loop_delay_ns(speed: u32) -> u32 {
     let nanosec     = 1_000_000_000;
-
     let interval    = nanosec / 106;   // 1/106th sec in nanoseconds
     let bit_time    = nanosec / speed; // time to clock out one bit
-
-    let packet_size = 192*8;
+    let packet_size = leptonspi::SPI_PACKET_SIZE*8;
     let segment_size = 60*packet_size; // 60 packets per segment
     let transmission_time = segment_size * bit_time; // time to clock out a segment. Must be less than `interval`
 
@@ -40,7 +37,7 @@ fn main() {
     // Receiver thread loop
     thread::spawn(move || {
         // Open SPI
-        let spi_speed     = 20_000_000; // really winds up being like 18MHz
+        let spi_speed     = leptonspi::SPI_DEFAULT_SPEED; // actually like 18MHz
         let loop_delay_ns = calculate_loop_delay_ns(spi_speed);
         let mut lepton    = LeptonSpi::new(0, spi_speed).unwrap();
 
@@ -51,13 +48,12 @@ fn main() {
                     let mut buffer = vec![0u8; 164];
                     lepton.read(&mut buffer).unwrap();
 
-                    // tx.send(buffer).unwrap();
                     if is_valid(buffer[0]) {
                         tx.send(buffer).unwrap();
                     }
                 }
             }
-            thread::sleep(Duration::new(0, loop_delay_ns)); // secs, nanos
+            thread::sleep(Duration::new(0, loop_delay_ns));
         }
     });
 
