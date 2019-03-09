@@ -1,3 +1,4 @@
+#![allow(warnings)]
 extern crate lepton_sdk_rs_sys;
 use lepton_sdk_rs_sys::*;
 use std::thread;
