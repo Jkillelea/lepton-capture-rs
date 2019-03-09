@@ -39,7 +39,7 @@ fn main() {
     // Receiver thread loop
     thread::spawn(move || {
         // Open SPI
-        let spi_speed     = 20_000_000;
+        let spi_speed     = 10_000_000;
         let loop_delay_ns = calculate_loop_delay_ns(spi_speed);
         let mut lepton    = LeptonSpi::new(0, spi_speed).unwrap();
 
