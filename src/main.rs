@@ -72,7 +72,7 @@ fn main() {
     // let mut stdout = stdout.lock();
     loop {
         if let Ok(packet) = rx.recv() {
-            println!("{} {}", packet[0], packet[1]);
+            println!("{:x?} {:x?}", packet[0], packet[1]);
         }
     }
     // ||
