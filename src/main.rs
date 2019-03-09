@@ -69,8 +69,9 @@ fn main() {
     // let mut stdout = io::stdout();
     // let mut stdout = stdout.lock();
     loop {
-        let packet = rx.recv();
-        println!("{:?}", packet);
+        let Ok(packet) = rx.recv() {
+            println!("{:?}", packet);
+        }
     }
     // ||
     // ||
