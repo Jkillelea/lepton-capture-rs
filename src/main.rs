@@ -2,6 +2,7 @@ extern crate lepton_sdk_rs_sys;
 use lepton_sdk_rs_sys::*;
 use std::thread;
 use std::time::Duration;
+use std::io;
 use std::io::prelude::*;
 use std::sync::mpsc::channel;
 
@@ -65,8 +66,11 @@ fn main() {
     // \/
 
     // Processing/sorting loop
+    // let mut stdout = io::stdout();
+    // let mut stdout = stdout.lock();
     loop {
-        let _packet = rx.recv();
+        let packet = rx.recv();
+        println!("{:?}", packet);
     }
     // ||
     // ||
