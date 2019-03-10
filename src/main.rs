@@ -1,6 +1,7 @@
 #![allow(warnings)]
 extern crate lepton_sdk_rs_sys;
 use lepton_sdk_rs_sys::*;
+use lepton_sdk_rs_sys::leptonspi::{SPI_PACKET_SIZE, SPI_DEFAULT_SPEED};
 use std::thread;
 use std::time::Duration;
 use std::io;
@@ -16,7 +17,7 @@ fn calculate_loop_delay_ns(speed: u32) -> u32 {
     let nanosec     = 1_000_000_000;
     let interval    = nanosec / 106;   // 1/106th sec in nanoseconds
     let bit_time    = nanosec / speed; // time to clock out one bit
-    let packet_size = leptonspi::SPI_PACKET_SIZE*8;
+    let packet_size = SPI_PACKET_SIZE*8; // in bits
     let segment_size = 60*packet_size; // 60 packets per segment
     let transmission_time = segment_size * bit_time; // time to clock out a segment. Must be less than `interval`
 
@@ -37,7 +38,7 @@ fn main() {
     // Receiver thread loop
     thread::spawn(move || {
         // Open SPI
-        let spi_speed     = leptonspi::SPI_DEFAULT_SPEED; // actually like 18MHz
+        let spi_speed     = SPI_DEFAULT_SPEED; // actually like 18MHz
         let loop_delay_ns = calculate_loop_delay_ns(spi_speed);
         let mut lepton    = LeptonSpi::new(0, spi_speed).unwrap();
 
@@ -45,7 +46,7 @@ fn main() {
         loop {
             for _segment in 1..5 { // 1 thru 4
                 for _packet in 0..60 { // 0 thru 59
-                    let mut buffer = vec![0u8; 164];
+                    let mut buffer = vec![0u8; SPI_PACKET_SIZE as usize];
                     lepton.read(&mut buffer).unwrap();
 
                     if is_valid(buffer[0]) {
