@@ -14,11 +14,11 @@ fn is_valid(data: u8) -> bool {
 }
 
 fn calculate_loop_delay_ns(speed: u32) -> u32 {
-    let nanosec     = 1_000_000_000;
-    let interval    = nanosec / 106;   // 1/106th sec in nanoseconds
-    let bit_time    = nanosec / speed; // time to clock out one bit
-    let packet_size = SPI_PACKET_SIZE*8; // in bits
-    let segment_size = 60*packet_size; // 60 packets per segment
+    let nanosec      = 1_000_000_000;
+    let interval     = nanosec / 106;     // 1/106th sec in nanoseconds
+    let bit_time     = nanosec / speed;   // time to clock out one bit
+    let packet_size  = SPI_PACKET_SIZE*8; // in bits
+    let segment_size = 60*packet_size;    // 60 packets per segment
     let transmission_time = segment_size * bit_time; // time to clock out a segment. Must be less than `interval`
 
     return interval - transmission_time;
@@ -36,6 +36,8 @@ fn main() {
     let (tx, rx) = channel();
 
     // Receiver thread loop
+    // This thread is very tight and only does the absolute minimum needed
+    // Consider it Soft-Realtime
     thread::spawn(move || {
         // Open SPI
         let spi_speed     = SPI_DEFAULT_SPEED; // actually like 18MHz
@@ -64,8 +66,9 @@ fn main() {
     // ||A
     // \/
 
-    // Processing/sorting loop
     let mut image = vec![ vec![0u16; 160]; 120]; // 160 by 120
+
+    // Processing/sorting loop
     loop {
         let packet: LeptonPacket;
         if let Ok(rx_pak) = rx.recv() {
