@@ -70,13 +70,15 @@ fn main() {
 
     // Processing/sorting loop
     loop {
-        let packet: LeptonPacket;
-        if let Ok(rx_pak) = rx.recv() {
-            packet = rx_pak.into();
-        }  else {
-            continue;
-        }
+        // decode packet or skip
+        let packet: LeptonPacket = if let Ok(rx_pak) = rx.recv() {
+            rx_pak.into()
+        } else {
+            continue
+        };
+
         println!("{} {} {}", packet.valid, packet.segment_no, packet.packet_no);
+        // TODO: reassemble the packets, in order, into an image.
     }
     // ||
     // ||
